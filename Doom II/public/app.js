@@ -1,0 +1,4 @@
+const wad=document.querySelector("#wad"),launch=document.querySelector("#launch"),status=document.querySelector("#status"),game=document.querySelector("#game"),launcher=document.querySelector("#launcher"),canvas=document.querySelector("#canvas");let file;
+wad.onchange=()=>{file=wad.files[0];launch.disabled=!file;status.textContent=file?"Ready: "+file.name:"Waiting for WAD..."};
+launch.onclick=async()=>{const data=new Uint8Array(await file.arrayBuffer());console.log("WAD loaded",data.length);launcher.hidden=true;game.hidden=false;canvas.width=960;canvas.height=540;const c=canvas.getContext("2d");c.fillStyle="#000";c.fillRect(0,0,960,540);c.fillStyle="#d42b1d";c.font="bold 42px Arial";c.textAlign="center";c.fillText("DOOM II WEB PORT",480,230);c.fillStyle="#aaa";c.font="20px Arial";c.fillText("WAD loaded. Connect an Emscripten-compatible engine build.",480,280)};
+document.querySelector("#full").onclick=()=>game.requestFullscreen?.();
