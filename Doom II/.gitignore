@@ -1,0 +1,7 @@
+dist/
+build/
+*.wad
+*.WAD
+node_modules/
+.DS_Store
+.env
