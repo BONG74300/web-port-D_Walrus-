@@ -1,0 +1,62 @@
+# Build output
+dist/*
+!dist/.gitkeep
+build/
+out/
+
+# Emscripten
+emsdk/
+.cache/
+emcc_cache/
+
+# Game data - NEVER commit commercial WAD files
+*.wad
+*.WAD
+
+# Downloaded engine source
+engine/source/
+engine/build/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Codespaces
+.codespaces/
+
+# C/C++ build files
+*.o
+*.obj
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# Autotools
+config.status
+config.log
+autom4te.cache/
