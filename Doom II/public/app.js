@@ -1,5 +1,0 @@
-"use strict";
-const wad=document.querySelector("#wad"),launch=document.querySelector("#launch"),status=document.querySelector("#status"),game=document.querySelector("#game"),launcher=document.querySelector("#launcher"),host=document.querySelector("#engine-host");let file=null;
-wad.onchange=()=>{file=wad.files[0]||null;launch.disabled=!file;status.textContent=file?"Ready: "+file.name:"Choose a WAD file."};
-launch.onclick=async()=>{if(!file)return;status.textContent="Checking WebAssembly engine...";try{const r=await fetch("engine/index.html",{method:"HEAD"});if(!r.ok)throw new Error("Engine files are missing. Run ./scripts/build-engine.sh");launcher.hidden=true;game.hidden=false;host.innerHTML='<iframe title="Doom engine" src="engine/index.html" allowfullscreen></iframe>';status.textContent="Engine opened. Use its WAD selector."}catch(e){console.error(e);status.textContent=e.message;launch.disabled=false;}};
-document.querySelector("#full").onclick=()=>game.requestFullscreen?.();
