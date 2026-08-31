@@ -1,71 +1,83 @@
 "use strict";
 
-const play = document.getElementById("play");
-const library = document.getElementById("library");
-const game = document.getElementById("game");
-const canvas = document.getElementById("canvas");
-const loading = document.getElementById("loading");
+document.addEventListener("DOMContentLoaded", () => {
+  const play = document.getElementById("play");
+  const library = document.getElementById("library");
+  const game = document.getElementById("game");
+  const canvas = document.getElementById("canvas");
+  const loading = document.getElementById("loading");
 
-let engineStarted = false;
+  if (!play || !library || !game || !canvas || !loading) {
+    console.error("Doom II launcher: required HTML elements are missing.");
+    return;
+  }
 
-function startGame() {
-  library.style.display = "none";
-  game.classList.add("active");
-  loading.classList.remove("hidden");
-  loading.textContent = "Loading Doom II…";
-  canvas.focus();
+  let engineStarted = false;
 
-  if (engineStarted) return;
-  engineStarted = true;
+  function startGame(event) {
+    event?.preventDefault();
 
-  // WebDOOM's Doom II build is a matching trio:
-  // doom2.js + doom2.wasm + doom2.data
-  window.Module = {
-    canvas: canvas,
+    library.style.display = "none";
+    game.classList.add("active");
+    loading.classList.remove("hidden");
+    loading.textContent = "Loading Doom II…";
+    canvas.focus();
 
-    locateFile(file) {
-      // Keep generated companion filenames unchanged.
-      return "./" + file;
-    },
+    if (engineStarted) return;
+    engineStarted = true;
 
-    print(text) {
-      console.log("[DOOM II]", text);
-    },
+    window.Module = {
+      canvas,
 
-    printErr(text) {
-      console.error("[DOOM II ERROR]", text);
-    },
+      locateFile(file) {
+        return new URL(file, window.location.href).href;
+      },
 
-    setStatus(text) {
-      if (text) loading.textContent = text;
-    },
+      print(text) {
+        console.log("[DOOM II]", text);
+      },
 
-    onRuntimeInitialized() {
-      console.log("Doom II runtime initialized");
-      loading.classList.add("hidden");
-      canvas.focus();
-    },
+      printErr(text) {
+        console.error("[DOOM II ERROR]", text);
+      },
 
-    onAbort(reason) {
-      console.error("Doom II aborted:", reason);
-      loading.textContent = "Game engine error: " + reason;
+      setStatus(text) {
+        if (text) loading.textContent = text;
+      },
+
+      onRuntimeInitialized() {
+        loading.classList.add("hidden");
+        canvas.focus();
+      },
+
+      onAbort(reason) {
+        console.error("Doom II aborted:", reason);
+        loading.textContent = "Game engine error: " + reason;
+        engineStarted = false;
+      }
+    };
+
+    const existing = document.querySelector('script[data-doom-engine="true"]');
+    if (existing) return;
+
+    const engine = document.createElement("script");
+    engine.src = "./doom2.js";
+    engine.async = true;
+    engine.dataset.doomEngine = "true";
+
+    engine.onload = () => console.log("Doom II engine script loaded");
+
+    engine.onerror = () => {
+      loading.textContent = "ERROR: Could not load doom2.js.";
       engineStarted = false;
-    }
-  };
+      engine.remove();
+    };
 
-  const engine = document.createElement("script");
-  engine.src = "./doom2.js";
-  engine.async = true;
+    document.body.appendChild(engine);
+  }
 
-  engine.onload = () => console.log("doom2.js loaded");
-
-  engine.onerror = () => {
-    loading.textContent =
-      "ERROR: Could not load doom2.js. Make sure doom2.js, doom2.wasm, and doom2.data are in this folder.";
-    engineStarted = false;
-  };
-
-  document.body.appendChild(engine);
-}
-
-play.addEventListener("click", startGame);
+  play.addEventListener("click", startGame);
+  play.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") startGame(event);
+  });
+});
