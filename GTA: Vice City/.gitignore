@@ -1,0 +1,10 @@
+wasm-revc/
+revc.js
+revc.wasm
+revc.data
+game-data/
+*.img
+*.iso
+*.zip
+*.tar.gz
+.DS_Store
