@@ -1,15 +1,8 @@
-# Generated WebDOOM output
-web/
-build/
-
-# Commercial Doom II game data - do not commit
-DOOM2.WAD
+WebDOOM/
 *.wad
-
-# Emscripten
-.emscripten
-emsdk/
-
-# Editor / OS
-.vscode/
+DOOM2.WAD
+*.wasm
+*.data
+doom.js
+!launcher.js
 .DS_Store
