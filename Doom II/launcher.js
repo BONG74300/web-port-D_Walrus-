@@ -1,20 +1,48 @@
 "use strict";
-const play=document.getElementById("play"),library=document.getElementById("library"),game=document.getElementById("game"),canvas=document.getElementById("canvas"),loading=document.getElementById("loading");
-let started=false;
-function start(){
- library.style.display="none"; game.classList.add("active"); canvas.focus();
- if(started)return; started=true;
- window.Module={
-  canvas,
-  locateFile:file=>"./"+file,
-  print:t=>console.log("[DOOM]",t),
-  printErr:t=>console.error("[DOOM]",t),
-  setStatus:t=>{if(t)loading.textContent=t},
-  onRuntimeInitialized(){loading.classList.add("hidden");canvas.focus();}
- };
- const s=document.createElement("script");s.src="./doom.js";s.async=true;
- s.onerror=()=>loading.textContent="Engine build missing. Run ./build-doom2.sh first.";
- document.body.appendChild(s);
+
+const play = document.getElementById("play");
+const library = document.getElementById("library");
+const game = document.getElementById("game");
+const canvas = document.getElementById("canvas");
+const loading = document.getElementById("loading");
+
+let engineStarted = false;
+
+function startGame() {
+  library.style.display = "none";
+  game.classList.add("active");
+  canvas.focus();
+
+  if (engineStarted) return;
+  engineStarted = true;
+
+  window.Module = {
+    canvas,
+    locateFile(file) {
+      return new URL(file, window.location.href).href;
+    },
+    print(text) { console.log("[DOOM II]", text); },
+    printErr(text) { console.error("[DOOM II]", text); },
+    setStatus(text) {
+      if (text) loading.textContent = text;
+    },
+    onRuntimeInitialized() {
+      loading.classList.add("hidden");
+      canvas.focus();
+    },
+    onAbort(reason) {
+      loading.textContent = "Game engine stopped: " + reason;
+    }
+  };
+
+  const engine = document.createElement("script");
+  engine.src = "./doom.js";
+  engine.async = true;
+  engine.onerror = () => {
+    loading.textContent = "Could not load doom.js. Build the WebAssembly engine first.";
+    engineStarted = false;
+  };
+  document.body.appendChild(engine);
 }
-play.addEventListener("click",start);
-play.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" ")start()});
+
+play.addEventListener("click", startGame);
